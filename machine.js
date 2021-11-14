@@ -1,4 +1,4 @@
-import { assign } from 'xstate'
+import { assign } from "xstate";
 
 const emailStates = {
   initial: "noError",
@@ -9,12 +9,12 @@ const emailStates = {
       states: {
         empty: {},
         badFormat: {},
-        noAccount: {}
+        noAccount: {},
       },
-      onEntry: "focusEmailInput"
-    }
-  }
-}
+      onEntry: "focusEmailInput",
+    },
+  },
+};
 
 const passwordStates = {
   initial: "noError",
@@ -25,12 +25,12 @@ const passwordStates = {
       states: {
         empty: {},
         tooShort: {},
-        incorrect: {}
+        incorrect: {},
       },
-      onEntry: "focusPasswordInput"
-    }
-  }
-}
+      // onEntry: "focusPasswordInput",
+    },
+  },
+};
 
 const authServiceStates = {
   initial: "noError",
@@ -41,20 +41,20 @@ const authServiceStates = {
       states: {
         communication: {
           on: {
-            SUBMIT: "#signInForm.waitingResponse"
-          }
+            SUBMIT: "#signInForm.waitingResponse",
+          },
         },
-        internal: {}
-      }
-    }
-  }
-}
+        internal: {},
+      },
+    },
+  },
+};
 
 export const loginMachineConfig = {
   id: "signInForm",
   context: {
     email: "",
-    password: ""
+    password: "",
   },
   initial: "ready",
   states: {
@@ -63,16 +63,16 @@ export const loginMachineConfig = {
       on: {
         INPUT_EMAIL: {
           actions: "cacheEmail",
-          target: "ready.email.noError"
+          target: "ready.email.noError",
         },
         INPUT_PASSWORD: {
           actions: "cachePassword",
-          target: "ready.password.noError"
+          target: "ready.password.noError",
         },
         SUBMIT: [
           {
             cond: "isNoEmail",
-            target: "ready.email.error.empty"
+            target: "ready.email.error.empty",
           },
           // {
           //   cond: "isEmailBadFormat",
@@ -80,59 +80,59 @@ export const loginMachineConfig = {
           // },
           {
             cond: "isNoPassword",
-            target: "ready.password.error.empty"
+            target: "ready.password.error.empty",
           },
           {
             cond: "isPasswordShort",
-            target: "ready.password.error.tooShort"
+            target: "ready.password.error.tooShort",
           },
           {
-            target: "waitingResponse"
-          }
-        ]
+            target: "waitingResponse",
+          },
+        ],
       },
       states: {
         email: {
-          ...emailStates
+          ...emailStates,
         },
         password: {
-          ...passwordStates
+          ...passwordStates,
         },
         authService: {
-          ...authServiceStates
-        }
-      }
+          ...authServiceStates,
+        },
+      },
     },
     waitingResponse: {
       on: {
-        CANCEL: "ready"
+        CANCEL: "ready",
       },
       invoke: {
         src: "requestSignIn",
         onDone: {
-          actions: "onSuccess"
+          actions: "onSuccess",
         },
         onError: [
           {
             cond: "isNoAccount",
-            target: "ready.email.error.noAccount"
+            target: "ready.email.error.noAccount",
           },
           {
             cond: "isIncorrectPassword",
-            target: "ready.password.error.incorrect"
+            target: "ready.password.error.incorrect",
           },
           {
             cond: "isNoResponse",
-            target: "ready.authService.error.communication"
+            target: "ready.authService.error.communication",
           },
           {
             cond: "isInternalServerErr",
-            target: "ready.authService.error.internal"
-          }
-        ]
-      }
-    }
-  }
+            target: "ready.authService.error.internal",
+          },
+        ],
+      },
+    },
+  },
 };
 
 // export const loginMachineConfig = {
@@ -165,7 +165,8 @@ export const options = {
   // a func that takes 2 args
   guards: {
     isNoEmail: (ctx, evt) => ctx.email.length === 0,
-    isEmailBadFormat: (ctx, evt) => ctx.email.length > 0 && !ctx.email.includes('@'),
+    isEmailBadFormat: (ctx, evt) =>
+      ctx.email.length > 0 && !ctx.email.includes("@"),
     // isEmailBadFormat: (context, event) =>
     //   context.email.length > 0 && !isEmail(context.email),
     isNoPassword: (context, event) => context.password.length === 0,
@@ -173,26 +174,27 @@ export const options = {
     isNoAccount: (context, evt) => evt.data.code === 1,
     isIncorrectPassword: (context, evt) => evt.data.code === 2,
     isNoResponse: (context, evt) => evt.data.code === 3,
-    isInternalServerErr: (context, evt) => evt.data.code === 4
+    isInternalServerErr: (context, evt) => evt.data.code === 4,
   },
   // mapping of invoked service (src) names to implementation
   services: {
-    requestSignIn: (context, event) => signIn(context.email, context.password)
+    requestSignIn: (context, event) => signIn(context.email, context.password),
   },
   // mapping of action names to implementation
   actions: {
     // assign is like setState for your context
     cacheEmail: assign((ctx, evt) => ({
-      email: evt.email
+      email: evt.email,
     })),
     cachePassword: assign((ctx, evt) => ({
-      password: evt.password
+      password: evt.password,
     })),
-    onSuccess: () => console.log('signed in')
+    onSuccess: () => console.log("signed in"),
   },
   // mapping of activity names to implementation
-  activities: {}
-}
+  activities: {},
+  devTools: true,
+};
 
 // error code 1 - no account
 // error code 2 - wrong password
