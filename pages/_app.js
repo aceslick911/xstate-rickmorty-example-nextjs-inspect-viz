@@ -11,7 +11,7 @@ if (typeof window !== "undefined") {
     iframe: false,
   });
 }
-export default class MyApp extends App {
+const AppClass = class MyApp extends App {
   static async getInitialProps({ Component, router, ctx }) {
     let pageProps = {};
 
@@ -30,4 +30,6 @@ export default class MyApp extends App {
       </ThemeProvider>
     );
   }
-}
+};
+
+export default AppClass;

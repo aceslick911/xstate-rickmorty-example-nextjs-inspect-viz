@@ -5,17 +5,9 @@ import Button from "../components/Button";
 
 import { Box, Image } from "rebass/styled-components";
 import { Label, Input } from "@rebass/forms";
-import { createMachine, Machine, assign } from "xstate";
+import { Machine, assign } from "xstate";
 import { useMachine } from "@xstate/react";
 
-import { inspect } from "@xstate/inspect";
-if (typeof window !== "undefined") {
-  inspect({
-    // update this address
-    //url: "https://tev8n.sse.codesandbox.io/inspector",
-    iframe: false,
-  });
-}
 // form with one input and one button
 // enter character name and get a bunch of chars
 // states: ready, enteringName, searching, displayResults, noResults, error
@@ -125,12 +117,14 @@ const options = {
   devTools: true,
 };
 
-export default (props) => {
+const RickAndMorty = (props) => {
   const ramMachine = Machine(config);
   const [current, send] = useMachine(ramMachine, options);
   return (
     <Flex center height="100vh">
-      {current.context.results.length === 0 && (
+      {!current.context.results ||
+        (current.context.results.length === 0 && <h1>NO RESULTS</h1>)}
+      {current.context.results && current.context.results.length === 0 && (
         <Box py={3}>
           {/* <Box>{current.}</Box> */}
           <Box px={2} mb={3}>
@@ -160,7 +154,7 @@ export default (props) => {
           )}
         </Box>
       )}
-      {current.context.results.length > 0 && (
+      {current.context.results && current.context.results.length > 0 && (
         <Flex px={2} flexWrap="wrap" height="100%" center>
           {current.context.results.map((char) => (
             <Box key={char.name}>
@@ -176,3 +170,5 @@ export default (props) => {
     </Flex>
   );
 };
+
+export default RickAndMorty;

@@ -1,8 +1,9 @@
-import React from 'react'
-import Theme from './theme'
+import React from "react";
+import Theme from "./theme";
 
-export default () => (
-  <style>{`
+const GlobalStyles = () => (
+  <style>
+    {`
       body {
         color: #444;
         margin: 0;
@@ -15,4 +16,6 @@ export default () => (
       }
   `}
   </style>
-)
+);
+
+export default GlobalStyles;

@@ -17,7 +17,7 @@ export default class MyDocument extends Document {
   }
 
   render = () => (
-    <Html lang="en">
+    <Html>
       <Head>
         <link rel="icon" href="/static/favicon.ico" />
 
