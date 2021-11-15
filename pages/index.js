@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import Flex from "../components/Flex";
 import Button from "../components/Button";
-import { options, loginMachineConfig } from "../machine";
+import { options, loginMachineConfig } from "../machines/login/machine";
 
 const Index = () => {
   const loginMachine = Machine(loginMachineConfig);
